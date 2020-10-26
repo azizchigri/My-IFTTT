@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>AREA</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/gridstack.js/0.4.0/gridstack.min.css" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/style/dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.2/css/bootstrap-select.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/0.10.0/lodash.min.js"></script>
+    <script type="text/javascript" src='https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js'></script>
+
+    <script type="text/javascript" src='//cdnjs.cloudflare.com/ajax/libs/gridstack.js/0.4.0/gridstack.min.js'></script>
+    <script type="text/javascript" src='//cdnjs.cloudflare.com/ajax/libs/gridstack.js/0.4.0/gridstack.jQueryUI.min.js'></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.2/js/bootstrap-select.min.js"></script>
+    <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
+
+    <script type="text/javascript" src="assets/js/cookies.js"></script>
+    <script type="text/javascript" src="assets/js/widgets.js"></script>
+    <script type="text/javascript" src="assets/js/dashboard.js"></script>
+    <script type="text/javascript" src="assets/js/user.js"></script>
+    <script type="text/javascript" src="assets/js/update.js"></script>
+    <script async defer src="https://apis.google.com/js/api.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var spotify_token = localStorage.getItem('spotify_token');
+            var twitch_token = localStorage.getItem('twitch_token');
+            var reddit_token = localStorage.getItem('reddit_token');
+
+            if(localStorage.getItem('spotify_token')){
+                setSpotifyDetails(spotify_token);
+            }
+            if(localStorage.getItem('twitch_token')){
+                setTwitchDetails(twitch_token);
+            }
+            if(localStorage.getItem('reddit_token')){
+                setRedditDetails(reddit_token);
+            }
+
+            $('.spotify-login-button').click(function(){
+                handleConnect('spotify', 'https://accounts.spotify.com/authorize', 'af55dfc221d346d68115f5b8454cc6f1', 'user-follow-modify playlist-modify-public');
+            });
+            $('.twitch-login-button').click(function(){
+                handleConnect('twitch', 'https://id.twitch.tv/oauth2/authorize', '6bmm3i2oefip1m3ka1hduez336tw02', 'user:edit');
+            });
+            $('.reddit-login-button').click(function(){
+                handleConnect('reddit', 'https://www.reddit.com/api/v1/authorize', 'mJYOa6iZ5-clng', 'mysubreddits subscribe');
+            });
+
+            function handleConnect(service, my_auth, client_id, scope){
+                var AUTH_URL = my_auth,
+                    CLIENT_ID = client_id,
+                    REDIRECT_URL = 'http://localhost:8081/callback_' + service + '.html',
+                    SCOPE = scope,
+                    RESPONSE_TYPE = 'token',
+                    STATE = "area_dev";
+
+                var authURL =
+                    AUTH_URL + "?client_id=" +
+                    CLIENT_ID + "&redirect_uri=" +
+                    encodeURIComponent(REDIRECT_URL) + "&scope=" +
+                    encodeURIComponent(SCOPE) +
+                    "&response_type=" + RESPONSE_TYPE +
+                    "&state=" + STATE;
+
+                var width = 450,
+                    height = 730,
+                    left = (screen.width / 2) - (width / 2),
+                    top = (screen.height / 2) - (height / 2);
+
+                var w = window.open(
+                    authURL,
+                    service,
+                    'menubar=no,location=no,resizable=no,scrollbars=no,status=no, width=' + width + ', height=' + height + ', top=' + top + ', left=' + left
+                );
+
+                window.addEventListener("message", function(event) {
+                    var hash = JSON.parse(event.data);
+                    if (hash.type == 'access_token_twitch') {
+                        callback_twitch(hash.access_token);
+                    }
+                    else if (hash.type == 'access_token_spotify') {
+                        callback_spotify(hash.access_token);
+                    }
+                    else if (hash.type == 'access_token_reddit') {
+                        callback_reddit(hash.access_token);
+                    }
+                }, false);
+
+                var callback_spotify = function(token){
+                    localStorage.setItem('spotify_token',token);
+                    setSpotifyDetails(token);
+                };
+
+                var callback_twitch = function(token){
+                    localStorage.setItem('twitch_token',token);
+                    setTwitchDetails(token);
+                };
+
+                var callback_reddit = function(token){
+                    localStorage.setItem('reddit_token',token);
+                    setRedditDetails(token);
+                };
+            }
+
+            function setRedditDetails(token){
+                $.ajax({
+                    url: 'https://oauth.reddit.com/api/v1/me',
+                    headers: {
+                        'Authorization': 'Bearer ' + token
+                    },
+                    success: function(response){
+                        console.log(response);
+                    },
+                    error: function(){
+                    }
+                });
+            }
+
+            function setTwitchDetails(token){
+                $.ajax({
+                    url: 'https://api.twitch.tv/helix/users',
+                    headers: {
+                        'Authorization': 'Bearer ' + token
+                    },
+                    success: function(response){
+                        console.log(response);
+                    },
+                    error: function(){
+                    }
+                });
+            }
+
+            function setSpotifyDetails(token){
+                $.ajax({
+                    url: 'https://api.spotify.com/v1/me',
+                    headers: {
+                        'Authorization': 'Bearer ' + token
+                    },
+                    success: function(response){
+                        console.log(response);
+                    },
+                    error: function(){
+                    }
+                });
+            }
+        });
+
+        function init_client()
+        {
+            if (gapi === undefined) {
+                var DISCOVERY_DOCS = ["https://www.googleapis.com/discovery/v1/apis/youtube/v3/rest", "https://www.googleapis.com/discovery/v1/apis/gmail/v1/rest"];
+                gapi.client.init({
+                    discoveryDocs: DISCOVERY_DOCS
+                }).then(function(result){
+                    console.log("--1--");
+                    console.log(result);
+                });
+            }
+        }
+
+        function youtube_get()
+        {
+            gapi.load('client:auth2', initClientYoutube);
+        }
+
+        function initClientYoutube()
+        {
+            var YOUTUBE_CLIENT_ID = '447327998103-l0r25iedm688pdiejrujod4ip4a3emio.apps.googleusercontent.com';
+            var YOUTUBE_SCOPES = ['https://www.googleapis.com/auth/youtube.readonly',
+                "https://www.googleapis.com/auth/youtube",
+                "https://www.googleapis.com/auth/youtube.force-ssl",
+                "https://www.googleapis.com/auth/youtube.readonly",
+                "https://www.googleapis.com/auth/youtube.upload",
+                "https://www.googleapis.com/auth/youtubepartner",
+                "https://www.googleapis.com/auth/youtubepartner-channel-audit"];
+            init_client();
+            gapi.auth.authorize({
+                client_id: YOUTUBE_CLIENT_ID,
+                scope: YOUTUBE_SCOPES
+            }).then(function (result) {
+                console.log("--2--");
+                console.log(result);
+                console.log(gapi.client.getToken());
+                let token_youtube = gapi.client.getToken();
+                localStorage.setItem('youtube_token', token_youtube.access_token);
+            });
+        }
+
+        function gmail_get()
+        {
+            gapi.load('client:auth2', initClientGmail);
+        }
+
+        function initClientGmail() {
+            var GMAIL_CLIENT_ID = '447327998103-l0r25iedm688pdiejrujod4ip4a3emio.apps.googleusercontent.com';
+            var GMAIL_API_KEY = 'AIzaSyCJuIouZFFtbI2uGSKHP_CNOwYXfLh9D9c';
+            var GMAIL_SCOPES = 'https://mail.google.com/';
+            init_client();
+            gapi.auth.authorize({
+                client_id: GMAIL_CLIENT_ID,
+                apiKey: GMAIL_API_KEY,
+                scope: GMAIL_SCOPES
+            }, function () {
+                let token_gmail = gapi.client.getToken();
+                localStorage.setItem('gmail_token', token_gmail.access_token);
+            });
+        }
+    </script>
+</head>
+<body>
+
+<nav class="navbar navbar-inverse">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="#" data-toggle="modal" data-target="#configWidgetModal">AREA</a>
+        </div>
+        <ul class="nav navbar-nav">
+            <li class="active"><a data-toggle="pill" href="#home">Home</a></li>
+            <li id="action_list_nav" style="visibility: hidden;" class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Actions<span class="caret"></span></a>
+                <ul class="dropdown-menu" id="servicesList"></ul></li>
+            <li id ="profileref" style="visibility: hidden;"><a data-toggle="pill" href="#profile">Profile</a></li>
+
+        </ul>
+        <ul class="nav navbar-nav navbar-right">
+            <li id ="signupref"><a href="#" data-toggle="modal" data-target="#registerModal"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
+            <li id ="loginref"><a href="#" data-toggle="modal" data-target="#loginModal"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+            <li id ="logoutref" style="visibility: hidden;"><a href="#" onclick=logout()><span class="glyphicon glyphicon-log-in"></span> Logout</a></li>
+        </ul>
+    </div>
+</nav>
+<div id="particles-js"></div>
+<script src="http://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+<script src="http://threejs.org/examples/js/libs/stats.min.js"></script>
+<script>
+    particlesJS("particles-js", {"particles":{"number":{"value":50,"density":{"enable":true,"value_area":800}},"color":{"value":"#241caa"},"shape":{"type":"circle","stroke":{"width":0,"color":"#000000"},"polygon":{"nb_sides":5},"image":{"src":"img/github.svg","width":100,"height":100}},"opacity":{"value":0.9104824135672403,"random":false,"anim":{"enable":false,"speed":1,"opacity_min":0.1,"sync":false}},"size":{"value":3,"random":false,"anim":{"enable":false,"speed":40,"size_min":0.1,"sync":false}},"line_linked":{"enable":true,"distance":110.4824135672403,"color":"#241caa","opacity":0.4,"width":1},"move":{"enable":true,"speed":6,"direction":"none","random":false,"straight":false,"out_mode":"out","bounce":false,"attract":{"enable":false,"rotateX":600,"rotateY":1200}}},"interactivity":{"detect_on":"canvas","events":{"onhover":{"enable":true,"mode":"grab"},"onclick":{"enable":false,"mode":"repulse"},"resize":true},"modes":{"grab":{"distance":400,"line_linked":{"opacity":1}},"bubble":{"distance":400,"size":40,"duration":2,"opacity":8,"speed":3},"repulse":{"distance":200,"duration":0.4},"push":{"particles_nb":4},"remove":{"particles_nb":2}}},"retina_detect":false});
+</script>
+<div class="container mt-3">
+<div class="tab-content">   
+    <div id="home" class="tab-pane fade in active"><br>
+
+        <div class="grid-stack" id="widgetGrid">
+        </div>
+
+    </div>
+    <div id="profile" class="tab-pane fade"><br>
+        <h3 class="input-group">Profile</h3>
+        <div class="input-group">
+            <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+            <input id="updateUsername" type="text" class="form-control" name="updateUsername" placeholder="Username" disabled>
+        </div>
+        <br>
+        <div class="input-group">
+            <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+            <input id="updateFirstname" type="text" class="form-control" name="updateFirstname" placeholder="Firstname" required>
+        </div>
+        <br>
+
+        <div class="input-group">
+            <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+            <input id="updateLastname" type="text" class="form-control" name="updateLastname" placeholder="Lastname" required>
+        </div>
+        <br>
+        <div class="input-group">
+            <span class="input-group-addon"><i class="glyphicon glyphicon-envelope"></i></span>
+            <input id="updateEmail" type="text" class="form-control" name="updateEmail" placeholder="Email" required>
+        </div>
+        <br>
+        <div class="input-group">
+            <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
+            <input id="updatePassword" type="password" class="form-control" name="updatePassword" placeholder="Password" required>
+        </div>
+        <br>
+        <div class="input-group">
+            <button class="twitch-login-button">TWITCH</button>
+            <button class="reddit-login-button">REDDIT</button>
+            <button class="spotify-login-button">SPOTIFY</button>
+            <button onclick="youtube_get()">YOUTUBE</button>
+            <button onclick="gmail_get()">GMAIL</button>
+            <button type="button" class="btn btn-primary pull-right" onclick=updateProfile()>Update profile</button>
+
+        </div>
+        <div class="input-group" id="subscribe-group"></div>
+    </div>
+</div>
+</div>
+<div class="modal fade" id="loginModal" role="dialog">
+    <div class="modal-dialog">
+        <!-- Login Modal-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title text-center">Login</h4>
+            </div>
+            <div class="modal-body">
+                <div class="input-group">
+                    <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+                    <input id="loginUsername" type="text" class="form-control" name="loginUsername" placeholder="Username" required>
+                </div>
+                <br>
+                <div class="input-group">
+                    <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
+                    <input id="loginPassword" type="password" class="form-control" name="loginPassword" placeholder="Password" required>
+                </div>
+                <br>
+            </div>
+            <div class="modal-footer"id="loginDisplay">
+                <div class="container-fluid">
+                    <button type="submit" class="btn btn-primary pull-right" onclick=loginMe()>Login</button>
+                    <button type="button" class="btn btn-danger pull-left" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<div class="modal fade" id="registerModal" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Register Modal-->
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h4 class="modal-title text-center">Register</h4>
+            </div>
+            <div class="modal-body">
+                <div class="input-group">
+                    <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+                    <input id="registerFirstname" type="text" class="form-control" name="registerFirstname" placeholder="Firstname" required>
+                </div>
+                <br>
+
+                <div class="input-group">
+                    <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+                    <input id="registerLastname" type="text" class="form-control" name="registerLastname" placeholder="Lastname" required>
+                </div>
+                <br>
+                <div class="input-group">
+                    <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+                    <input id="registerUsername" type="text" class="form-control" name="registerUsername" placeholder="Username" required>
+                </div>
+
+                <br>
+                <div class="input-group">
+                    <span class="input-group-addon"><i class="glyphicon glyphicon-envelope"></i></span>
+                    <input id="registerEmail" type="text" class="form-control" name="registerEmail" placeholder="Email" required>
+                </div>
+                <br>
+                <div class="input-group">
+                    <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
+                    <input id="registerPassword" type="password" class="form-control" name="registerPassword" placeholder="Password" required>
+                </div>
+                <br>
+            </div>
+            <div class="modal-footer" id="registerDisplay">
+                <div class="container-fluid">
+                    <button type="submit" class="btn btn-primary pull-right" onclick=registerMe()>Register</button>
+                    <button type="button" class="btn btn-danger pull-left" data-dismiss="modal" >Close</button>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+</body>
+</html>

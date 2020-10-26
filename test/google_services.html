@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8' />
+</head>
+<body>
+<button onclick="youtube_get()">YOUTUBE</button>
+<button onclick="gmail_get()">GMAIL</button>
+<script async defer src="https://apis.google.com/js/api.js"></script>
+<script type="text/javascript">
+    function init_client()
+    {
+        if (gapi === undefined) {
+            var DISCOVERY_DOCS = ["https://www.googleapis.com/discovery/v1/apis/youtube/v3/rest", "https://www.googleapis.com/discovery/v1/apis/gmail/v1/rest"];
+            gapi.client.init({
+                discoveryDocs: DISCOVERY_DOCS
+            }).then(() => {});
+        }
+    }
+
+    function youtube_get()
+    {
+        gapi.load('client:auth2', initClientYoutube);
+    }
+
+    function initClientYoutube()
+    {
+        var YOUTUBE_CLIENT_ID = '447327998103-l0r25iedm688pdiejrujod4ip4a3emio.apps.googleusercontent.com';
+        var YOUTUBE_SCOPES = ['https://www.googleapis.com/auth/youtube.readonly',
+            "https://www.googleapis.com/auth/youtube",
+            "https://www.googleapis.com/auth/youtube.force-ssl",
+            "https://www.googleapis.com/auth/youtube.readonly",
+            "https://www.googleapis.com/auth/youtube.upload",
+            "https://www.googleapis.com/auth/youtubepartner",
+            "https://www.googleapis.com/auth/youtubepartner-channel-audit"];
+        init_client();
+        gapi.auth.authorize({
+            client_id: YOUTUBE_CLIENT_ID,
+            scope: YOUTUBE_SCOPES
+        }).then(function () {console.log(gapi.client.getToken());});
+    }
+
+    function gmail_get()
+    {
+        gapi.load('client:auth2', initClientGmail);
+    }
+
+    function initClientGmail() {
+        var GMAIL_CLIENT_ID = '447327998103-l0r25iedm688pdiejrujod4ip4a3emio.apps.googleusercontent.com';
+        var GMAIL_API_KEY = 'AIzaSyCJuIouZFFtbI2uGSKHP_CNOwYXfLh9D9c';
+        var GMAIL_SCOPES = 'https://mail.google.com/';
+        init_client();
+        gapi.auth.authorize({
+            client_id: GMAIL_CLIENT_ID,
+            apiKey: GMAIL_API_KEY,
+            scope: GMAIL_SCOPES
+        }, function () {
+            console.log(gapi.client.getToken());
+        });
+    }
+</script>
+<script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
+</body>
