@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.area">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/area_app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.Area">
+        <activity android:name=".Login.ActivitySignChoice">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".ActivityRegisterAction"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.Area"/>
+        <activity
+            android:name=".ActivitySettings"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.Area"/>
+        <activity
+            android:name=".ActivityHome"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.Area">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:host="127.0.0.1"
+                    android:scheme="http"
+                    android:path="/area_twitch_authorize_callback" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:host="127.0.0.1"
+                    android:scheme="http"
+                    android:path="/area_spotify_authorize_callback" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:host="127.0.0.1"
+                    android:scheme="http"
+                    android:path="/area_youtube_authorize_callback" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:host="127.0.0.1"
+                    android:scheme="http"
+                    android:path="/area_gmail_authorize_callback" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:host="127.0.0.1"
+                    android:scheme="http"
+                    android:path="/area_reddit_authorize_callback" />
+            </intent-filter>
+        </activity>
+    </application>
+
+</manifest>

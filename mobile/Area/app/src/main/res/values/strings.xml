@@ -1,0 +1,38 @@
+<resources>
+    <string name="area_app_name" translatable="false">Area</string>
+    <string name="area_hint_pick_server">Server\'s IP</string>
+    <string name="area_hint_firstname">First name</string>
+    <string name="area_hint_lastname">Last Name</string>
+    <string name="area_hint_username">Username</string>
+    <string name="area_hint_password">Password</string>
+    <string name="area_hint_confirm_password">Confirm the password</string>
+    <string name="area_hint_mail" translatable="false">Email</string>
+    <string name="area_hint_birthday">Birthday</string>
+    <string name="area_hint_country">Country</string>
+    <string name="area_button_next">Next</string>
+    <string name="area_button_cancel">Cancel</string>
+    <string name="area_button_create">Create</string>
+    <string name="area_button_update">Update</string>
+    <string name="area_button_signin">Sign in</string>
+    <string name="area_button_signup">Sign up</string>
+    <string name="area_button_gmail" translatable="false">Gmail</string>
+    <string name="area_button_reddit" translatable="false">Reddit</string>
+    <string name="area_button_meteo">Weather</string>
+    <string name="area_button_spotify" translatable="false">Spotify</string>
+    <string name="area_button_timer">Timer</string>
+    <string name="area_button_twitch" translatable="false">Twitch</string>
+    <string name="area_button_youtube" translatable="false">Youtube</string>
+
+    <string name="area_error_password">Password must contain at least 8 characters.</string>
+    <string name="area_error_confirm_password">Passwords must match.</string>
+    <string name="area_error_server">Invalid server response</string>
+    <string name="area_error_internet">Invalid server</string>
+    <string name="area_error_request">Acces denied</string>
+    <string name="area_error_make_request">Network failure</string>
+    <string name="area_error_password_login">Invalid password</string>
+    <string name="area_error_login">Invalid password and/or username</string>
+    <string name="area_error_users_exists">User already exists</string>
+    <string name="area_error_create_account">Account creation error</string>
+
+    <string name="area_success">Success</string>
+</resources>

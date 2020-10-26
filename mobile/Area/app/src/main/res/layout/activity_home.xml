@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/loginPageBackgroundColor"
+    android:fillViewport="true"
+    tools:context=".ActivitySettings">
+
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/constrainlayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        tools:context="com.example.area.ActivityRegisterAction">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorAccent"
+            app:layout_constraintTop_toTopOf="parent">
+        </androidx.appcompat.widget.Toolbar>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/reddit_signin_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true"
+            android:text="@string/area_button_reddit"
+            app:layout_constraintLeft_toLeftOf="@id/constrainlayout"
+            app:layout_constraintRight_toRightOf="@id/constrainlayout"
+            app:layout_constraintTop_toBottomOf="@id/toolbar" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/gmail_signin_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true"
+            android:text="@string/area_button_gmail"
+            app:layout_constraintLeft_toLeftOf="@id/constrainlayout"
+            app:layout_constraintRight_toRightOf="@id/constrainlayout"
+            app:layout_constraintTop_toBottomOf="@id/reddit_signin_button" />
+
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/spotify_signin_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true"
+            android:text="@string/area_button_spotify"
+            app:layout_constraintLeft_toLeftOf="@id/constrainlayout"
+            app:layout_constraintRight_toRightOf="@id/constrainlayout"
+            app:layout_constraintTop_toBottomOf="@id/gmail_signin_button" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/twitch_signin_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true"
+            android:text="@string/area_button_twitch"
+            app:layout_constraintLeft_toLeftOf="@id/constrainlayout"
+            app:layout_constraintRight_toRightOf="@id/constrainlayout"
+            app:layout_constraintTop_toBottomOf="@id/spotify_signin_button" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/youtube_signin_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true"
+            android:text="@string/area_button_youtube"
+            app:layout_constraintLeft_toLeftOf="@id/constrainlayout"
+            app:layout_constraintRight_toRightOf="@id/constrainlayout"
+            app:layout_constraintTop_toBottomOf="@id/twitch_signin_button" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

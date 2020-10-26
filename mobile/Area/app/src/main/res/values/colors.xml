@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#E0E0E0</color>
+    <color name="colorPrimaryDark">#3B5998</color>
+    <color name="colorAccent">#3B5998</color>
+    <color name="textColorPrimary">#000000</color>
+    <color name="toolbarIconColor">@color/colorPrimary</color>
+    <color name="loginPageBackgroundColor">#FFFFFF</color>
+</resources>
